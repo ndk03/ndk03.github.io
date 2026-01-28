@@ -383,16 +383,29 @@ function initializeContactForm() {
         submitBtn.innerHTML = '<span>Sending...</span><i class="fas fa-spinner fa-spin"></i>';
         submitBtn.disabled = true;
 
-        // Simulate form submission (replace with actual form handler)
-        // For GitHub Pages, you can use services like Formspree, Netlify Forms, or EmailJS
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        try {
+            // Submit to Formspree
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
 
-        // Show success state
-        submitBtn.innerHTML = '<span>Message Sent!</span><i class="fas fa-check"></i>';
-        submitBtn.style.background = 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)';
-
-        // Reset form
-        form.reset();
+            if (response.ok) {
+                // Show success state
+                submitBtn.innerHTML = '<span>Message Sent!</span><i class="fas fa-check"></i>';
+                submitBtn.style.background = 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)';
+                form.reset();
+            } else {
+                throw new Error('Form submission failed');
+            }
+        } catch (error) {
+            // Show error state
+            submitBtn.innerHTML = '<span>Error! Try Again</span><i class="fas fa-times"></i>';
+            submitBtn.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+        }
 
         // Reset button after delay
         setTimeout(() => {
